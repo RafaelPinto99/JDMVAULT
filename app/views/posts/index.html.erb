@@ -1,0 +1,8 @@
+<h1>All Posts</h1>
+<% @posts.each do |post| %>
+  <div>
+    <h3><%= link_to post.user.username, post_path(post) %></h3>
+    <p><%= post.caption %></p>
+    <%= link_to "View", post_path(post), class: "btn btn-primary" %>
+  </div>
+<% end %>
