@@ -10,7 +10,71 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_10_173412) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_17_144137) do
+  create_table "albums", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_albums_on_user_id"
+  end
+
+  create_table "bookmarks", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "post_id", null: false
+    t.integer "album_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["album_id"], name: "index_bookmarks_on_album_id"
+    t.index ["post_id"], name: "index_bookmarks_on_post_id"
+    t.index ["user_id"], name: "index_bookmarks_on_user_id"
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "post_id", null: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "likes", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "post_id", null: false
+    t.integer "comment_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_id"], name: "index_likes_on_comment_id"
+    t.index ["post_id"], name: "index_likes_on_post_id"
+    t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.integer "sender_id"
+    t.integer "receiver_id"
+    t.boolean "isread"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "posts", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.text "caption"
+    t.boolean "ispublic"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_posts_on_user_id"
+  end
+
+  create_table "relationships", force: :cascade do |t|
+    t.integer "follower_id"
+    t.integer "following_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -23,4 +87,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_10_173412) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "albums", "users"
+  add_foreign_key "bookmarks", "albums"
+  add_foreign_key "bookmarks", "posts"
+  add_foreign_key "bookmarks", "users"
+  add_foreign_key "comments", "posts"
+  add_foreign_key "comments", "users"
+  add_foreign_key "likes", "comments"
+  add_foreign_key "likes", "posts"
+  add_foreign_key "likes", "users"
+  add_foreign_key "messages", "users", column: "receiver_id"
+  add_foreign_key "messages", "users", column: "sender_id"
+  add_foreign_key "posts", "users"
+  add_foreign_key "relationships", "users", column: "follower_id"
+  add_foreign_key "relationships", "users", column: "following_id"
 end
